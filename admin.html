@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOLT Admin Panel | Manage Catalog</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            500: '#0284c7',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-gray-900 text-white border-b border-gray-800 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="p-2 bg-brand-600 text-white rounded-lg shadow-md">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                </span>
+                <h1 class="text-lg font-bold">VOLT <span class="text-xs bg-brand-600 px-2 py-0.5 rounded text-white font-normal ml-2">Admin Dashboard</span></h1>
+            </div>
+            <a href="index.html" target="_blank" class="text-xs text-gray-300 hover:text-white flex items-center gap-1 bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg border border-gray-700 transition-colors">
+                <span>View Storefront</span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full grid lg:grid-cols-12 gap-8">
+        
+        <!-- Left Column: Add / Edit Product Form -->
+        <div class="lg:col-span-5">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 sticky top-24">
+                <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                    <h2 id="form-title" class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-5 h-5 text-brand-600"></i>
+                        <span>Add New Appliance</span>
+                    </h2>
+                    <button id="cancel-edit-btn" onclick="resetForm()" class="hidden text-xs text-red-500 font-semibold hover:underline">
+                        Cancel Edit
+                    </button>
+                </div>
+
+                <form id="product-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                    <input type="hidden" id="product-id">
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Product Title</label>
+                        <input type="text" id="prod-name" required placeholder="e.g. Smart Dual Cooling Refrigerator" class="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Category</label>
+                            <select id="prod-category" required class="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="refrigerators">Refrigerators</option>
+                                <option value="washing">Washing & Laundry</option>
+                                <option value="climate">Climate Control</option>
+                                <option value="cooking">Cooking & Ovens</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Price (₹)</label>
+                            <input type="number" id="prod-price" required placeholder="129990" class="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Badge</label>
+                            <input type="text" id="prod-badge" placeholder="e.g. Best Seller, New" class="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Energy Rating</label>
+                            <input type="text" id="prod-energy" placeholder="e.g. A+++, 5 Star" class="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Image URL</label>
+                        <input type="text" id="prod-image" required placeholder="https://images.unsplash.com/..." class="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Key Specs (Comma Separated)</label>
+                        <input type="text" id="prod-specs" placeholder="580L Capacity, Dual Inverter, Wi-Fi" class="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 mt-2">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        <span>Save Product</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Column: Live Product Data List -->
+        <div class="lg:col-span-7 space-y-4">
+            <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+                <div>
+                    <h3 class="font-bold text-gray-900 text-base">Active Products Catalog</h3>
+                    <p class="text-xs text-gray-500">Manage, edit, or remove catalog items live</p>
+                </div>
+                <span id="product-count-badge" class="bg-brand-50 text-brand-700 font-extrabold text-xs px-3 py-1 rounded-full border border-brand-100">
+                    0 Items
+                </span>
+            </div>
+
+            <div id="admin-products-list" class="space-y-3">
+                <!-- Dynamically Rendered Inventory Items -->
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const defaultProducts = [
+            {
+                id: 'p1',
+                name: 'Volt SmartHub French Door Refrigerator',
+                category: 'refrigerators',
+                price: 159990,
+                rating: 4.9,
+                reviews: 128,
+                image: 'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?auto=format&fit=crop&w=800&q=80',
+                badge: 'Best Seller',
+                energy: 'A+++',
+                specs: ['580L Capacity', 'Dual Inverter', 'Wi-Fi Smart Control']
+            },
+            {
+                id: 'p2',
+                name: 'EcoWash Ultra Front Load Washer',
+                category: 'washing',
+                price: 68990,
+                rating: 4.8,
+                reviews: 94,
+                image: 'https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fit=crop&w=800&q=80',
+                badge: 'Eco Choice',
+                energy: 'A+++',
+                specs: ['10.5 kg', 'Steam Hygiene Cycle', 'Silent Drive Motor']
+            },
+            {
+                id: 'p3',
+                name: 'PureAir Inverter Split AC 1.5 Ton',
+                category: 'climate',
+                price: 54990,
+                rating: 4.7,
+                reviews: 210,
+                image: './images/ac.png',
+                badge: 'Popular',
+                energy: 'A++',
+                specs: ['4-Way Auto Swing', 'HEPA Filter', 'Ultra Quiet 19dB']
+            },
+            {
+                id: 'p4',
+                name: 'ProChef Induction Range & Convection Oven',
+                category: 'cooking',
+                price: 104990,
+                rating: 4.9,
+                reviews: 76,
+                image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80',
+                badge: 'Chef Series',
+                energy: 'A+',
+                specs: ['5 Induction Zones', 'Air Fry Function', 'Precision Probe']
+            },
+            {
+                id: 'p5',
+                name: 'FrostFree Side-by-Side Refrigerator',
+                category: 'refrigerators',
+                price: 119990,
+                rating: 4.6,
+                reviews: 82,
+                image: './images/fridge.png',
+                badge: 'New',
+                energy: 'A++',
+                specs: ['620L Storage', 'Water Dispenser', 'Door Alarm']
+            },
+            {
+                id: 'p6',
+                name: 'SmartDry Heat Pump Clothes Dryer',
+                category: 'washing',
+                price: 74990,
+                rating: 4.8,
+                reviews: 65,
+                image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?auto=format&fit=crop&w=800&q=80',
+                badge: 'Energy Saver',
+                energy: 'A+++',
+                specs: ['9 kg Capacity', 'Sensor Dry', 'Wrinkle Care']
+            }
+        ];
+
+        let adminCatalog = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCatalog();
+            renderAdminProducts();
+            if (window.lucide) lucide.createIcons();
+        });
+
+        function loadCatalog() {
+            const savedData = localStorage.getItem('volt_products');
+            if (savedData) {
+                adminCatalog = JSON.parse(savedData);
+            } else {
+                adminCatalog = [...defaultProducts];
+                saveCatalog();
+            }
+        }
+
+        function saveCatalog() {
+            localStorage.setItem('volt_products', JSON.stringify(adminCatalog));
+            renderAdminProducts();
+        }
+
+        function renderAdminProducts() {
+            const container = document.getElementById('admin-products-list');
+            const countBadge = document.getElementById('product-count-badge');
+            
+            if (countBadge) countBadge.textContent = `${adminCatalog.length} Items`;
+            if (!container) return;
+
+            if (adminCatalog.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-2xl p-8 text-center border border-gray-200 text-gray-400">
+                        <i data-lucide="package-open" class="w-10 h-10 mx-auto mb-2"></i>
+                        <p class="text-sm font-semibold">No products found in catalog.</p>
+                    </div>
+                `;
+                if (window.lucide) lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = adminCatalog.map(p => `
+                <div class="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm flex items-center justify-between gap-4">
+                    <img src="${p.image}" alt="${p.name}" class="w-16 h-16 object-cover rounded-xl bg-gray-100 border shrink-0">
+                    
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-gray-100 text-gray-600">${p.category}</span>
+                            ${p.badge ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-brand-50 text-brand-600">${p.badge}</span>` : ''}
+                        </div>
+                        <h4 class="font-bold text-gray-900 text-sm truncate mt-1">${p.name}</h4>
+                        <p class="text-xs font-extrabold text-brand-600 mt-0.5">₹${Number(p.price).toLocaleString('en-IN')}</p>
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button onclick="editProduct('${p.id}')" class="p-2 text-gray-600 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="Edit">
+                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="deleteProduct('${p.id}')" class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('product-id').value;
+            const name = document.getElementById('prod-name').value.trim();
+            const category = document.getElementById('prod-category').value;
+            const price = Number(document.getElementById('prod-price').value);
+            const badge = document.getElementById('prod-badge').value.trim() || 'New';
+            const energy = document.getElementById('prod-energy').value.trim() || 'A+';
+            const image = document.getElementById('prod-image').value.trim();
+            const specsRaw = document.getElementById('prod-specs').value;
+            const specs = specsRaw ? specsRaw.split(',').map(s => s.trim()) : ['High Efficiency'];
+
+            if (id) {
+                const index = adminCatalog.findIndex(p => p.id === id);
+                if (index !== -1) {
+                    adminCatalog[index] = { ...adminCatalog[index], name, category, price, badge, energy, image, specs };
+                }
+            } else {
+                const newProduct = {
+                    id: 'p_' + Date.now(),
+                    name,
+                    category,
+                    price,
+                    rating: 5.0,
+                    reviews: 1,
+                    image,
+                    badge,
+                    energy,
+                    specs
+                };
+                adminCatalog.unshift(newProduct);
+            }
+
+            saveCatalog();
+            resetForm();
+        }
+
+        function editProduct(id) {
+            const product = adminCatalog.find(p => p.id === id);
+            if (!product) return;
+
+            document.getElementById('product-id').value = product.id;
+            document.getElementById('prod-name').value = product.name;
+            document.getElementById('prod-category').value = product.category;
+            document.getElementById('prod-price').value = product.price;
+            document.getElementById('prod-badge').value = product.badge || '';
+            document.getElementById('prod-energy').value = product.energy || '';
+            document.getElementById('prod-image').value = product.image;
+            document.getElementById('prod-specs').value = product.specs ? product.specs.join(', ') : '';
+
+            document.getElementById('form-title').innerHTML = `
+                <i data-lucide="pencil" class="w-5 h-5 text-brand-600"></i>
+                <span>Edit Appliance</span>
+            `;
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Are you sure you want to remove this product from the catalog?')) {
+                adminCatalog = adminCatalog.filter(p => p.id !== id);
+                saveCatalog();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('product-form').reset();
+            document.getElementById('product-id').value = '';
+            document.getElementById('form-title').innerHTML = `
+                <i data-lucide="plus-circle" class="w-5 h-5 text-brand-600"></i>
+                <span>Add New Appliance</span>
+            `;
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
